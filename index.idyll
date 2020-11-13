@@ -1,0 +1,106 @@
+[meta title:"IS445 Homework10 - Ron Payne" description:"Idyll practice" /]
+
+[Header
+  fullWidth:true
+  title:"IS445 Homework10"
+  subtitle:"Getting some Idyll practice"
+  author:"Ron Payne"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#cc6600"
+  color:"#ffffff"
+   /]
+
+
+## Introduction
+
+I have never coded in html so I will be using the same Vega-Lite plots from Homework #9
+and using it to get a better understanding of html and Idyll since the syntax is different.
+
+So let's see if this works. :)
+
+## Loading the data file
+[data name:"inventory" source: "building_inventory.csv" /]
+
+Here is the data table for the data file:
+
+[Table data:inventory /]
+
+## Plotting Total Square Footage for Agency Name from "building_inventory.csv" dataset with Vega-Lite
+[Scroller currentStep:scrollerIndex]
+  [Graphic style:`{padding: 1}`]
+		[IdyllVegaLite data:inventory spec:`{
+		  width:500,
+		  height:600,
+		  title:"Agency Total Building Space",
+		  mark: {type:"bar", tooltip:true},
+		  encoding: {
+			x: {aggregate:"sum", 
+				field:"Square Footage", 
+				type:"quantitative"
+				},
+			y: {
+				sort: {op:"sum", field:"Square Footage", order:"descending"},
+				field:"Agency Name",
+				type:"nominal"
+				}
+		  }
+		}`  /]
+  [/Graphic]
+
+  [Step]## This "scroller" component is prety cool![/Step]
+  [Step]## I noticed that Vega-Lite doesn't seem to work exactly like in Iodide.[/Step]
+  [Step]## Not just the syntax of quotation marks but my "Transform" code didn't work. [/Step]
+  [Step]## Of course, it could be the be the person writing the code too...[/Step]
+
+[/Scroller]
+
+## My thoughts and intent with this week's work
+
+I used the same dataset and plot as in Homework #9 for the simple reason that I know how the 
+Vega-Light plot should look so I know if I am getting what should be getting. 
+I get very caught up and sometimes confused as to what syntax to us and this week I wanted to
+focus on learning the nuances of Idyll and html.
+
+As in Homework #9, I was trying to show the top 20 Agencies with the most total square footage 
+and then group the agencies greater than 20 into a group called "all others. However, I could 
+not get the "transform" argument to work in the Vega-Lite section. So I backed it out to show 
+all the agencies. 
+
+I would appriciate your thoughts on if it was Idyll using Vega-Lite or if I had a syntax error.
+Here is the "spec" code that produced the image above:
+
+```
+  width:500,
+  height:600,
+  title:"Agency Total Building Space",
+  mark: {type:"bar", tooltip:true},
+  encoding: {
+	x: {aggregate:"sum", field:"Square Footage", type:"quantitative"},
+	y: {sort: {op:"sum", field:"Square Footage", order:"descending"},
+		field:"Agency Name",
+		type:"nominal"}
+  } 
+```
+
+Here is the "spec" code that did not render a plot at all:
+
+```
+	width:500,
+	height:600,
+	title:"Top 20 Agencies by Total Building Space",
+	transform: {
+		    {aggregate:{op:"sum", field:"Square Footage", as:"Square_Footage", groupby:"Agency Name"}},
+			{window:{op:"row_number", as:"rank"},sort:{field:"Square_Footage", order:"descending" }},
+			{calculate:"datum.rank < 21 ? datum['Agency Name'] : 'All Others'", as: "Ranked_Agencies"}
+		  },
+	mark: {type:"bar", tooltip:true},
+	encoding: {
+		x: {aggregate:"sum", field:"Square_Footage", type:"quantitative"},
+		y: {sort: {op:"sum", field:"Square_Footage", order:"descending"},
+			field:"Ranked_Agencies",
+			type:"nominal"}
+  }
+```
+Thanks for the feedback!
+
